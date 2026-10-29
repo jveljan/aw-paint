@@ -1,4 +1,4 @@
-# aw-applet-paint
+# aw-paint
 
 A simple paint applet for Agent Web: brush, eraser, color, size, undo, clear, PNG export. Agents draw on the same canvas through a CLI tool API with a live animated view. An optional auto-correct mode snaps rough strokes to line, circle, rectangle, triangle and letters (deterministic, rule-based, no ML).
 
