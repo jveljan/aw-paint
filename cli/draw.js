@@ -10,8 +10,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createState } from '../lib/state.js';
-import { createTools, SCHEMAS, ToolError } from '../lib/tools.js';
+import { createState } from '../lib/model/state.js';
+import { createTools, SCHEMAS, ToolError } from '../lib/model/tools.js';
 import { renderPng } from './render-png.js';
 
 // Same relative path the applet uses via /api/fs?project=: run the CLI from the project root.

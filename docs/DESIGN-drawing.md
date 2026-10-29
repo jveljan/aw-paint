@@ -4,7 +4,7 @@ Agent Web applet (see AGENTS.md and APPLET-CONTRACT.md). No server of its own.
 
 ## Architecture
 - The canvas is one JSON document, `drawing/canvas.json`, in the open project: ordered vector objects `{id,type,color,size,points|geometry|text,source:user|agent}` plus `seq`, `history` (30 undo steps) and `lastCall`. Eraser = white stroke object.
-- The applet (`app.js`) reads and writes it through `data.js` (host `/api/fs/read`, `/api/fs/write`) and polls every 1 s while visible.
+- The applet (`src/app.js`) reads and writes it through `data.js` (host `/api/fs/read`, `/api/fs/write`) and polls every 1 s while visible.
 - Agents use `cli/draw.js` (draw_line, draw_shape, draw_text, clear, get_canvas, list, batch, undo), which edits the same file. Batch is all-or-nothing.
 - Live view: new `source:"agent"` objects are animated client-side with the agent cursor; the log shows `lastCall`.
 - `lib/` modules are pure (no DOM, no I/O) so `npm test` covers them without a browser. `cli/render-png.js` rasterizes PNGs for agents (CLI only).
@@ -12,7 +12,7 @@ Agent Web applet (see AGENTS.md and APPLET-CONTRACT.md). No server of its own.
 
 ```mermaid
 flowchart LR
- UI[app.js] -- data.js --> F[(drawing/canvas.json)]
+ UI[src/app.js] -- data.js --> F[(drawing/canvas.json)]
  Agent -- cli/draw.js --> F
  UI -- poll 1s --> F
  UI --> L[lib/tools + recognizer + font]

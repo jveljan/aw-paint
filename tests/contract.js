@@ -41,8 +41,8 @@ for (const f of files(root)) {
   for (const m of specs) if (!/^(\/core\/|\.\.?\/)/.test(m[1])) bad(`${rel}: import "${m[1]}" (only /core/* or relative)`);
 }
 // lib/ must stay pure (importable from node tests): no /core/* there.
-for (const f of fs.readdirSync(path.join(root, 'lib'))) {
-  if (/\/core\//.test(fs.readFileSync(path.join(root, 'lib', f), 'utf8'))) bad(`lib/${f}: must not import /core/*`);
+for (const f of files(path.join(root, 'lib'))) {
+  if (/\/core\//.test(fs.readFileSync(f, 'utf8'))) bad(`${path.relative(root, f).split(path.sep).join('/')}: lib must not import /core/*`);
 }
 
 if (errors.length) { console.error('contract FAILED:\n- ' + errors.join('\n- ')); process.exit(1); }

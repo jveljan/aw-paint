@@ -6,7 +6,7 @@ Read first: `docs/APPLET-CONTRACT.md` (host contract), then `brief.md`, `docs/FE
 
 ## How it works
 - Canvas document = `drawing/canvas.json` in the **open project** (`{version,width,height,seq,nextId,objects,history,lastCall}`), 1200x800, undo history capped at 30.
-- Applet (`app.js`): user strokes go through `lib/tools.js#userStroke` (optional deterministic auto-correct via `lib/recognizer.js`), saved via `data.js` (`/api/fs/read` + `/api/fs/write`). While visible it polls the file every 1 s; new `source:"agent"` objects animate with the agent cursor; the log line shows `lastCall`.
+- Applet (`src/app.js`): user strokes go through `lib/model/tools.js#userStroke` (optional deterministic auto-correct via `lib/recognition/recognizer.js`), saved via `src/data.js` (`/api/fs/read` + `/api/fs/write`). While visible it polls the file every 1 s; new `source:"agent"` objects animate with the agent cursor; the log line shows `lastCall`.
 - **Agent tools** (`cli/draw.js`, plain node, no deps). Run from the project root of the target project:
   ```
   node <applet>/cli/draw.js list                                  # JSON schemas
@@ -21,8 +21,9 @@ Read first: `docs/APPLET-CONTRACT.md` (host contract), then `brief.md`, `docs/FE
 - PNG: the UI "PNG" button exports the on-screen canvas in the browser; agents get a PNG from `get_canvas --png` (node rasterizer `cli/render-png.js`, needs `node:zlib`, so it is CLI-only).
 
 ## Layout
-- Root: `applet.json`, `index.html`, `app.js` (UI, `bootApplet`), `data.js` (only data access), `style.css`.
-- `lib/` pure ES modules, no `/core/*`, no DOM: `font.js`, `shapes.js`, `recognizer.js`, `state.js`, `tools.js`, `sync.js`.
+- Root: `applet.json`, `index.html`, `favicon.svg` (the host needs these at the root).
+- `src/`: page code. `app.js` (boot, project switch, doc sync), `data.js` (only data access), `style.css`, `ui/view.js` (render, agent animation, log), `ui/input.js` (toolbar, pointer drawing, demo).
+- `lib/` pure ES modules, no `/core/*`, no DOM. `lib/model/`: `state.js`, `shapes.js`, `tools.js`, `sync.js`. `lib/recognition/`: `font.js`, `recognizer.js`.
 - `cli/` node-only: `draw.js` (agent tools), `render-png.js`. Never imported by the page.
 - `tests/`: `contract.js` (crew-lab copy, also skips `cli/` and checks `lib/` purity), `*.test.js` (node:test).
 - `mockup/`: original design mockup, not used at runtime.

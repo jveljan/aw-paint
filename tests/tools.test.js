@@ -6,9 +6,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { createState, HISTORY_MAX } from '../lib/state.js';
-import { createTools, userStroke, ToolError } from '../lib/tools.js';
-import { isNewer, newAgentObjects } from '../lib/sync.js';
+import { createState, HISTORY_MAX } from '../lib/model/state.js';
+import { createTools, userStroke, ToolError } from '../lib/model/tools.js';
+import { isNewer, newAgentObjects } from '../lib/model/sync.js';
 import { run } from '../cli/draw.js';
 import { renderPng } from '../cli/render-png.js';
 

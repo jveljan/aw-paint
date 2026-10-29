@@ -56,12 +56,12 @@ Output is one JSON line. Errors print `{"ok":false,"error":...}` and exit 1 with
 ## How it works
 
 ```
- you ──> app.js ──┐
+ you ──> src/app.js ┐
                   ├──> drawing/canvas.json  <── agent ── cli/draw.js
  live view <──────┘        (polled every 1 s)
 ```
 
-User strokes pass through `lib/recognizer.js` when auto-correct is on. Both sides share the same pure modules in `lib/`. Details: [docs/DESIGN-drawing.md](docs/DESIGN-drawing.md).
+User strokes pass through `lib/recognition/recognizer.js` when auto-correct is on. Both sides share the same pure modules in `lib/`. Details: [docs/DESIGN-drawing.md](docs/DESIGN-drawing.md).
 
 ## Develop
 

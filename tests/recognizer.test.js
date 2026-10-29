@@ -1,8 +1,8 @@
 
 import test from 'node:test';
 import assert from 'node:assert';
-import { recognize, resample } from '../lib/recognizer.js';
-import { GLYPHS } from '../lib/font.js';
+import { recognize, resample } from '../lib/recognition/recognizer.js';
+import { GLYPHS } from '../lib/recognition/font.js';
 
 // seeded PRNG (test only)
 function prng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
