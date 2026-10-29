@@ -9,14 +9,14 @@ Sources: brief.md, docs/FEATURES.md, mockup/index.html (approved look: toolbar B
 - R3 Undo reverts the last stroke (user or agent), multi-level. Clear empties the canvas and is undoable.
 - R4 Line, rectangle, circle and text tools as in the mockup. PNG download is the only export.
 
-**Agent tool API** (HTTP JSON, same canvas state as the user)
-- R5 `draw_line {x1,y1,x2,y2,color?,size?}`, `draw_shape {shape: line|circle|rectangle|triangle, geometry, color?, size?, fill?}`, `draw_text {x,y,text,color?,size?}`, `clear {}`, `get_canvas {}` (returns size, ordered object list and a PNG data URL).
-- R6 Invalid input returns 400 with a JSON error; the canvas is unchanged.
-- R7 Endpoints: GET /api/tools (schemas), POST /api/tools/NAME, GET /api/events (SSE).
-- R8 Canvas state is held on the server (one shared canvas); the browser syncs from it.
+**Agent tool API** (CLI, `node cli/draw.js <tool> <json>`; same canvas file as the user)
+- R5 draw_line {x1,y1,x2,y2,color?,size?}, draw_shape {shape: line|circle|rectangle|triangle, geometry, color?, size?, fill?}, draw_text {x,y,text,color?,size?}, clear {}, get_canvas {} (objects, optional PNG with --png).
+- R6 Invalid input prints {"ok":false,"error"} and exits 1; the file is unchanged.
+- R7 `list` prints the tool schemas; `batch` is all-or-nothing.
+- R8 State lives in drawing/canvas.json of the open project.
 
 **Live agent drawing**
-- R9 Each agent call is streamed over SSE and drawn progressively (animated points), with an agent cursor and the current call in the log.
+- R9 New agent objects are picked up by polling (1 s) and drawn progressively (animated points), with an agent cursor and the current call in the log.
 - R10 The user can draw while the agent animates; order is kept and nothing is lost.
 
 **Auto-correct mode**
@@ -26,31 +26,25 @@ Sources: brief.md, docs/FEATURES.md, mockup/index.html (approved look: toolbar B
 - R14 Letters: built-in stroke font; template matching on normalised strokes with a documented threshold.
 
 ## Non-functional
-- N1 Node 22, no npm dependencies, plain static front end.
-- N2 Listens on 0.0.0.0:$PORT (default 3000); relative paths, env config.
-- N3 Dockerfile included; works on Linux and Windows.
-- N4 Tests run with `node --test`; recognizer and API need no browser.
+- N1 Node 22, no npm dependencies, plain ES modules.
+- N2 Runs inside Agent Web (applet contract); no own server, no Dockerfile.
+- N3 `npm test` runs without a browser.
 
 ## Acceptance criteria
 | ID | Given / When / Then |
 |---|---|
-| A1 | Server starts on $PORT; GET / returns the UI matching the mockup layout |
+| A1 | Applet opens at /dapp/<name>/?project=<p> and matches the mockup layout |
 | A2 | Brush drag makes a stroke; eraser removes pixels; undo removes it; clear then undo restores |
-| A3 | POST draw_line returns 200 and get_canvas lists the line |
-| A4 | All 5 tools have a schema in /api/tools and work as in R5 |
-| A5 | Bad input (missing field, non-number, unknown shape, text over 200 chars) gives 400, state unchanged |
-| A6 | An open browser gets an SSE event and animates the stroke over at least 300 ms, with cursor and log line |
+| A3 | draw_line via CLI succeeds and get_canvas lists the line |
+| A4 | list shows 5 tool schemas; each tool works as in R5 |
+| A5 | Bad input (missing field, non-number, unknown shape, text over 200 chars) exits 1, file unchanged |
+| A6 | An open applet animates a new agent stroke over at least 300 ms, with cursor and log line |
 | A7 | Noisy line/circle/rectangle/triangle fixtures snap correctly in at least 95% of a fixed set |
 | A8 | Letter fixtures (at least A, E, L, O, T, X, 1) recognised at least 90% |
 | A9 | Recognizer run twice on the same points gives byte-identical output |
 | A10 | Auto-correct off: strokes never altered |
 | A11 | Scribbles matching nothing stay unchanged |
-| A12 | docker build succeeds and the container answers on $PORT |
-| A13 | package.json has no dependencies |
+| A12 | package.json has no dependencies |
 
-## Assumptions and open questions
-- One shared canvas, no auth, no persistence across restarts (assumed).
-- Triangle is in auto-correct and draw_shape only; the mockup has no triangle tool (assumed fine).
-- Canvas fixed 1200x800 logical size (assumed).
-- Is HTTP enough, or must the API also be exposed as an MCP tool in Agent Web? Assumed HTTP.
-- Letters limited to uppercase A-Z and 0-9 (assumed).
+## Assumptions
+One shared canvas per project, 1200x800, uppercase A-Z and 0-9, triangle only via auto-correct and draw_shape. Not verified in a browser yet: A1, A2, A6.
