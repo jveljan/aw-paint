@@ -1,0 +1,111 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Paint</title>
+<style>
+:root{--bg:#0f1115;--panel:#181b22;--line:#262a34;--txt:#e8eaf0;--mut:#8b91a1;--acc:#7c5cff;--agent:#ff8a4c}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;font:14px/1.4 Inter,system-ui,sans-serif;color:var(--txt);background:radial-gradient(1200px 600px at 20% -10%,#242046,transparent),var(--bg);display:flex;gap:14px;padding:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px #0006}
+.tools{width:68px;padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.tools button{width:44px;height:44px;border:0;border-radius:12px;background:transparent;color:var(--mut);cursor:pointer;display:grid;place-items:center;transition:.15s}
+.tools button:hover{background:#242833;color:var(--txt)}
+.tools button.on{background:linear-gradient(135deg,var(--acc),#4f8cff);color:#fff;box-shadow:0 4px 14px #7c5cff66}
+svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sep{width:28px;height:1px;background:var(--line);margin:4px 0}
+main{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px}
+.logo{font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+.logo i{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--agent))}
+.sw{display:flex;gap:6px}
+.sw b{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;outline:1px solid #0006;transition:.15s}
+.sw b.on{border-color:#fff;transform:scale(1.15)}
+input[type=range]{accent-color:var(--acc);width:110px}
+.sp{flex:1}
+.btn{border:1px solid var(--line);background:#20242e;color:var(--txt);padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit;transition:.15s}
+.btn:hover{background:#2a2f3b}
+.btn.agent{background:linear-gradient(135deg,#ff8a4c,#ff5c7a);border:0;font-weight:600;box-shadow:0 4px 14px #ff8a4c55}
+.tg{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--mut)}
+.tg input{display:none}
+.tg span{width:38px;height:22px;border-radius:99px;background:#2c303b;position:relative;transition:.2s}
+.tg span:after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tg input:checked+span{background:var(--acc)}
+.tg input:checked+span:after{left:19px}
+.tg input:checked~em{color:var(--txt)}
+.tg em{font-style:normal}
+.stage{flex:1;position:relative;padding:14px;min-height:0}
+.stage canvas{width:100%;height:100%;border-radius:12px;background:#fff;display:block;cursor:crosshair;
+ background-image:radial-gradient(#e3e5ec 1px,transparent 1px);background-size:22px 22px}
+.badge{position:absolute;top:28px;right:28px;display:none;align-items:center;gap:8px;background:#000a;backdrop-filter:blur(6px);padding:6px 12px;border-radius:99px;font-size:12px}
+.badge.on{display:flex}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--agent);animation:p 1s infinite}
+@keyframes p{50%{opacity:.25;transform:scale(1.6)}}
+.log{padding:10px 16px;font:12px ui-monospace,Consolas,monospace;color:var(--mut);display:flex;gap:10px}
+.log b{color:var(--agent);font-weight:600}
+.log code{color:#c8cbe0}
+#cur{position:fixed;display:none;pointer-events:none;transform:translate(-3px,-3px);z-index:9;filter:drop-shadow(0 2px 6px #0007)}
+#cur span{position:absolute;left:18px;top:16px;background:var(--agent);color:#1a0d05;font:600 11px system-ui;padding:2px 8px;border-radius:99px;white-space:nowrap}
+</style>
+
+<aside class="panel tools">
+ <button class="on" title="Brush"><svg viewBox="0 0 24 24"><path d="M3 21c3 0 5-1 5-4a3 3 0 0 1 3-3l9-9a2.1 2.1 0 0 0-3-3l-9 9a3 3 0 0 1-3 3c-3 0-2 4-2 7z"/></svg></button>
+ <button title="Eraser"><svg viewBox="0 0 24 24"><path d="M20 20H9L3 14a2 2 0 0 1 0-3l8-8a2 2 0 0 1 3 0l6 6a2 2 0 0 1 0 3l-8 8"/></svg></button>
+ <div class="sep"></div>
+ <button title="Line"><svg viewBox="0 0 24 24"><path d="M5 19L19 5"/></svg></button>
+ <button title="Rectangle"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></button>
+ <button title="Circle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg></button>
+ <button title="Text"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button>
+</aside>
+
+<main>
+ <header class="panel">
+  <div class="logo"><i></i>Paint</div>
+  <div class="sw" id="sw"><b class="on" style="background:#7c5cff"></b><b style="background:#111827"></b><b style="background:#ef4444"></b><b style="background:#22c55e"></b><b style="background:#0ea5e9"></b><b style="background:#f59e0b"></b></div>
+  <input type="range" min="1" max="30" value="6" id="size">
+  <span class="sp"></span>
+  <label class="tg"><input type="checkbox" checked><span></span><em>Auto-correct</em></label>
+  <button class="btn">Undo</button><button class="btn" id="clr">Clear</button>
+  <button class="btn agent" id="play">✦ Agent draws</button>
+ </header>
+
+ <section class="panel stage">
+  <canvas id="c"></canvas>
+  <div class="badge" id="badge"><i></i>Agent is drawing</div>
+ </section>
+
+ <div class="panel log"><b>agent ▸</b><code id="log">waiting for tool calls…</code></div>
+</main>
+
+<div id="cur"><svg viewBox="0 0 24 24" style="fill:#ff8a4c;stroke:#fff;stroke-width:1.5"><path d="M3 3l7 18 2.5-7.5L20 11z"/></svg><span>Agent</span></div>
+
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),log=document.getElementById('log'),cur=document.getElementById('cur'),badge=document.getElementById('badge');
+let col='#7c5cff',dpr=devicePixelRatio||1;
+function fit(){const r=c.getBoundingClientRect();c.width=r.width*dpr;c.height=r.height*dpr;x.scale(dpr,dpr);x.lineCap=x.lineJoin='round'}
+fit();
+document.querySelectorAll('.tools button').forEach(b=>b.onclick=()=>{if(b.closest('.tools')){document.querySelectorAll('.tools button').forEach(o=>o.classList.remove('on'));b.classList.add('on')}});
+document.querySelectorAll('#sw b').forEach(b=>b.onclick=()=>{document.querySelectorAll('#sw b').forEach(o=>o.classList.remove('on'));b.classList.add('on');col=b.style.background});
+document.getElementById('clr').onclick=()=>x.clearRect(0,0,c.width,c.height);
+// user drawing
+let d=0;
+c.onpointerdown=e=>{d=1;x.strokeStyle=col;x.lineWidth=size.value;x.beginPath();x.moveTo(e.offsetX,e.offsetY)};
+c.onpointermove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke()}};
+onpointerup=()=>d=0;
+// sample art
+x.strokeStyle='#7c5cff';x.lineWidth=6;x.beginPath();x.arc(220,170,70,0,7);x.stroke();
+// agent replay
+const sleep=t=>new Promise(r=>setTimeout(r,t));
+function seg(a,b,n){const r=[];for(let i=1;i<=n;i++)r.push([a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n]);return r}
+function poly(k,n=24){let p=[k[0]];for(let i=1;i<k.length;i++)p=p.concat(seg(k[i-1],k[i],n));return p}
+const heart=[];for(let i=0;i<=80;i++){const t=i/80*6.283;heart.push([520+16*Math.pow(Math.sin(t),3)*5,230-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*5])}
+const jobs=[
+ ['draw_line','{"from":[380,110],"to":[640,110]}',poly([[380,110],[640,110]],40),'#0ea5e9'],
+ ['draw_shape','{"type":"rect","x":400,"y":300,"w":220,"h":110}',poly([[400,300],[620,300],[620,410],[400,410],[400,300]]),'#22c55e'],
+ ['draw_path','{"name":"heart","points":80}',heart,'#ef4444']
+];
+document.getElementById('play').onclick=async()=>{
+ const r=c.getBoundingClientRect();badge.classList.add('on');cur.style.display='block';x.lineWidth=5;
+ for(const[n,a,p,k]of jobs){log.innerHTML=n+' <span style="color:#8b91a1">'+a+'</span>';x.strokeStyle=k;x.beginPath();x.moveTo(...p[0]);
+  for(const q of p){x.lineTo(...q);x.stroke();cur.style.left=r.left+q[0]+'px';cur.style.top=r.top+q[1]+'px';await sleep(14)}
+  await sleep(350)}
+ cur.style.display='none';badge.classList.remove('on');log.textContent='done · 3 tool calls'};
+</script>

@@ -1,0 +1,11 @@
+{
+  "id": "drawing-applet-with-agent-tool-api",
+  "title": "Paint",
+  "description": "Simple paint canvas with deterministic auto-correct; agents draw on the same canvas via cli/draw.js.",
+  "placement": "view",
+  "host": 1,
+  "needs": ["project"],
+  "uses": [],
+  "service": false,
+  "cmds": ["toast"]
+}

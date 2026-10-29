@@ -1,0 +1,14 @@
+{
+  "archetype": "applet",
+  "title": "Drawing applet with agent tool API",
+  "goal": "A drawing applet in Agent Web where users draw on a canvas and agents draw too via a tool API.",
+  "crew": "factory",
+  "type": "static",
+  "install": "",
+  "start": "",
+  "test": "npm test",
+  "preview": {
+    "mode": "static",
+    "entry": "."
+  }
+}

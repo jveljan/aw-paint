@@ -1,0 +1,10 @@
+{
+  "name": "drawing-applet-with-agent-tool-api",
+  "private": true,
+  "type": "module",
+  "description": "Agent Web applet: paint canvas + agent drawing tools (test scripts only, no dependencies)",
+  "scripts": {
+    "test": "node tests/contract.js && node --test tests/*.test.js"
+  },
+  "engines": { "node": ">=22" }
+}
