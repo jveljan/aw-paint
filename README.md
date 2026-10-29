@@ -12,6 +12,15 @@
 
 An applet for **Agent Web**. Draw with brush, eraser, shapes and text. Agents draw through a small tool API, and you watch their strokes appear live with an animated cursor.
 
+## Demo
+
+Agent strokes are drawn live, point by point. These two pictures were each made from a handful of `draw_line`, `draw_shape` and path calls.
+
+<p align="center">
+  <img src="docs/img/demo-landscape.svg" alt="Animation: an agent draws a sunset over mountains and sea" width="48%">
+  <img src="docs/img/demo-rocket.svg" alt="Animation: an agent draws a rocket flying through stars" width="48%">
+</p>
+
 ## Features
 
 - **Paint:** brush, eraser, line, rectangle, circle, text, color, size, undo, clear, PNG export.
